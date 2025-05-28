@@ -222,15 +222,25 @@
         }
         
         .loading {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             text-align: center;
             color: #666;
-            padding: 40px;
             font-size: 1.2em;
+            max-width: 400px;
+            margin: 0 auto;
         }
         
         .no-matches {
-            text-align: center;
+            background: white;
+            border-radius: 20px;
             padding: 60px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
         }
         
         .no-matches h2 {
@@ -426,6 +436,15 @@
                 padding: 12px;
             }
             
+            .loading {
+                padding: 40px 20px;
+                font-size: 1em;
+            }
+            
+            .no-matches {
+                padding: 40px 20px;
+            }
+            
             .no-matches h2 {
                 font-size: 1.3em;
             }
@@ -498,103 +517,119 @@
                 
                 if (response.ok) {
                     currentMatches = await response.json();
-                    currentIndex = 0;
-                    displayCurrentMatch();
+                    if (currentMatches.length > 0) {
+                        displayMatch(0);
+                    } else {
+                        showNoMatches();
+                    }
                 } else if (response.status === 401) {
                     window.location.href = '/';
                 }
             } catch (error) {
                 console.error('Error loading matches:', error);
-                document.getElementById('matchContainer').innerHTML = `
-                    <div class="match-card">
-                        <div class="no-matches">
-                            <h2>oops! something went wrong 😅</h2>
-                            <p>try refreshing the page</p>
-                        </div>
-                    </div>
-                `;
+                document.getElementById('matchContainer').innerHTML = '<div class="loading">Error loading matches. Please try again.</div>';
             }
         }
         
-        // Display current match
-        function displayCurrentMatch() {
-            const container = document.getElementById('matchContainer');
-            
-            if (currentMatches.length === 0) {
-                container.innerHTML = `
-                    <div class="match-card">
-                        <div class="no-matches">
-                            <h2>no new matches right now 😔</h2>
-                            <p>check back later or update your profile!</p>
-                            <a href="/dashboard" class="back-btn">back to dashboard</a>
-                        </div>
-                    </div>
-                `;
+        // Display a match
+        function displayMatch(index) {
+            if (index >= currentMatches.length) {
+                showNoMatches();
                 return;
             }
             
-            if (currentIndex >= currentMatches.length) {
-                container.innerHTML = `
-                    <div class="match-card">
-                        <div class="no-matches">
-                            <h2>that's all for now! 🎉</h2>
-                            <p>you've seen all available matches</p>
-                            <a href="/dashboard" class="back-btn">back to dashboard</a>
-                        </div>
-                    </div>
-                `;
-                return;
+            const match = currentMatches[index];
+            const user = match.user;
+            
+            let lookingForText = '';
+            if (user.looking_for === 'buddy') {
+                lookingForText = '📚 study buddy';
+            } else if (user.looking_for === 'date') {
+                lookingForText = '💕 someone special';
+            } else {
+                lookingForText = '🤷 open to anything';
             }
             
-            const match = currentMatches[currentIndex];
-            const userInterests = match.user.interests || [];
-            const commonInterests = match.common_interests || [];
+            // Create profile image HTML
+            let profileImageHtml = '';
+            if (user.profile_picture) {
+                profileImageHtml = `<img src="${user.profile_picture}" alt="${user.username}" class="profile-image">`;
+            } else {
+                const initial = user.username ? user.username.charAt(0).toUpperCase() : '?';
+                profileImageHtml = `<div class="profile-image-placeholder">${initial}</div>`;
+            }
             
-            container.innerHTML = `
+            const matchContainer = document.getElementById('matchContainer');
+            matchContainer.innerHTML = `
                 <div class="match-card">
                     <div class="profile-image-container">
-                        ${match.user.profile_picture ? `<img src="${match.user.profile_picture}" alt="${match.user.username}" class="profile-image">` : `<div class="profile-image-placeholder">${match.user.username ? match.user.username.charAt(0).toUpperCase() : '?'}</div>`}
+                        ${profileImageHtml}
                     </div>
-                    <h2>${match.user.username}</h2>
-                    ${match.user.age ? `<p class="age">${match.user.age} years old</p>` : ''}
-                    <p class="looking-for">Looking for: ${match.user.looking_for === 'buddy' ? '📚 study buddy' : match.user.looking_for === 'date' ? '💕 someone special' : '🤷 open to anything'}</p>
-                    ${match.user.bio ? `<p class="bio">${match.user.bio}</p>` : ''}
+                    <h2>${user.username}</h2>
+                    ${user.age ? `<div class="age">Age: ${user.age}</div>` : ''}
+                    <div class="looking-for">Looking for: ${lookingForText}</div>
                     
-                    ${match.match_percentage ? `
-                        <div class="compatibility">
-                            <div class="percentage">${match.match_percentage}% Match</div>
-                            ${match.compatibility_reasons && match.compatibility_reasons.length > 0 ? `
-                                <div class="reason">${match.compatibility_reasons[0]}</div>
-                            ` : ''}
-                        </div>
-                    ` : ''}
+                    ${user.bio ? `<div class="bio">${user.bio}</div>` : ''}
                     
-                    ${userInterests.length > 0 ? `
+                    <div class="compatibility">
+                        <div class="percentage">${match.match_percentage}% Match</div>
+                        ${match.compatibility_reasons && match.compatibility_reasons.length > 0 ? 
+                            `<div class="reason">${match.compatibility_reasons[0]}</div>` : ''}
+                    </div>
+                    
+                    ${match.common_interests && match.common_interests.length > 0 ? `
                         <div class="interests">
                             <h3>Common Interests</h3>
                             <div class="interest-tags">
-                                ${userInterests.map(interest => `
-                                    <span class="interest-tag ${commonInterests.includes(interest.name) ? 'common-interest' : ''}">${interest.name}</span>
-                                `).join('')}
+                                ${match.common_interests.map(interest => 
+                                    `<span class="interest-tag common-interest">${interest}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    ${user.interests && user.interests.length > 0 ? `
+                        <div class="interests">
+                            <h3>All Interests</h3>
+                            <div class="interest-tags">
+                                ${user.interests.map(interest => {
+                                    const isCommon = match.common_interests && match.common_interests.includes(interest.name);
+                                    return `<span class="interest-tag ${isCommon ? 'common-interest' : ''}">${interest.name}</span>`;
+                                }).join('')}
                             </div>
                         </div>
                     ` : ''}
                     
                     <div class="action-buttons">
                         <button class="pass-btn" onclick="passMatch()">Pass</button>
-                        <button class="pick-btn" onclick="pickMatch(${match.user.id})">Pick ❤️</button>
+                        <button class="pick-btn" onclick="pickMatch(${user.id})">Pick! 💕</button>
                     </div>
                 </div>
             `;
         }
         
-        // Pass on current match
-        function passMatch() {
-            currentIndex++;
-            displayCurrentMatch();
+        // Show no matches message
+        function showNoMatches() {
+            document.getElementById('matchContainer').innerHTML = `
+                <div class="no-matches">
+                    <h2>No more matches! 😢</h2>
+                    <p>Check back later for new people to match with!</p>
+                    <a href="/dashboard" class="back-btn">Back to Dashboard</a>
+                </div>
+            `;
         }
         
-        // Pick current match
+        // Pass on a match
+        function passMatch() {
+            currentIndex++;
+            if (currentIndex < currentMatches.length) {
+                displayMatch(currentIndex);
+            } else {
+                showNoMatches();
+            }
+        }
+        
+        // Pick a match
         async function pickMatch(userId) {
             try {
                 const response = await fetch('/matching/pick', {
@@ -609,14 +644,23 @@
                 if (response.ok) {
                     const result = await response.json();
                     if (result.is_mutual) {
-                        alert(`🎉 it's a match! ${currentMatches[currentIndex].user.username} picked you too!`);
+                        alert("It's a match! 🎉 You both picked each other!");
+                        window.location.href = '/dashboard';
+                    } else {
+                        currentIndex++;
+                        if (currentIndex < currentMatches.length) {
+                            displayMatch(currentIndex);
+                        } else {
+                            showNoMatches();
+                        }
                     }
-                    currentIndex++;
-                    displayCurrentMatch();
+                } else {
+                    const error = await response.json();
+                    alert(error.detail || 'Failed to pick user');
                 }
             } catch (error) {
                 console.error('Error picking match:', error);
-                alert('oops! something went wrong. try again?');
+                alert('Failed to pick user. Please try again.');
             }
         }
         
@@ -624,4 +668,5 @@
         loadMatches();
     </script>
 </body>
+</html> 
 </html> 

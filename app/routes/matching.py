@@ -69,8 +69,9 @@ async def pick_user(
         db_pick.is_mutual = True
         reverse_pick.is_mutual = True
         
-        # Add to matches
+        # Add to matches - BIDIRECTIONAL
         current_user.matches.append(picked_user)
+        picked_user.matches.append(current_user)
         
         # Create notifications for both users
         notification1 = user_models.Notification(

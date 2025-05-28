@@ -38,7 +38,8 @@ async def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         age=user.age,
         looking_for=user.looking_for,
         traits=json.dumps(user.traits) if user.traits else "[]",
-        match_preference=user.match_preference
+        match_preference=user.match_preference,
+        profile_picture=user.profile_picture
     )
     
     db.add(db_user)
@@ -63,7 +64,7 @@ async def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
         db.commit()
     
     db.refresh(db_user)
-    logger.info(f"User {user.username} registered successfully")
+    logger.info(f"User {user.username} registered successfully with profile picture: {'Yes' if user.profile_picture else 'No'}")
     return db_user
 
 @router.post("/token", response_model=schemas.Token)
