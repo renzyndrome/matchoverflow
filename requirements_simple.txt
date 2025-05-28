@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+python-multipart
+sqlalchemy
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+openai==0.28.1
+jinja2
+httpx
+aiofiles 

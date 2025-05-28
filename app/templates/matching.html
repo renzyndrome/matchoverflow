@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchOverflow - Find Matches</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 1.8em;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .match-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .profile-image-container {
+            margin-bottom: 20px;
+        }
+        
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
+            background: #f0f0f0;
+            margin: 0 auto;
+        }
+        
+        .profile-image-placeholder {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 72px;
+            font-weight: bold;
+            border: 4px solid #667eea;
+            margin: 0 auto;
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .match-name {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .match-percentage {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+        
+        .match-info {
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            margin: 10px 0;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .match-bio {
+            background: #f8f8ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .match-preference {
+            background: #fff8e1;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 2px solid #ffd54f;
+        }
+        
+        .preference-label {
+            font-weight: 600;
+            color: #f57c00;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .interests-section {
+            margin: 20px 0;
+        }
+        
+        .interests-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .interest-tag {
+            background: #e8eaf6;
+            color: #5c6bc0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+        
+        .common-interest {
+            background: #667eea;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .pass-btn, .pick-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .pass-btn {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        .pass-btn:hover {
+            background: #d0d0d0;
+            transform: translateY(-2px);
+        }
+        
+        .pick-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .pick-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 40px;
+            font-size: 1.2em;
+        }
+        
+        .no-matches {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .no-matches h2 {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .no-matches p {
+            color: #999;
+            margin-bottom: 30px;
+        }
+        
+        .compatibility-reasons {
+            background: #f3e5f5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .reasons-label {
+            font-weight: 600;
+            color: #7b1fa2;
+            margin-bottom: 10px;
+            display: block;
+        }
+        
+        .reason-item {
+            color: #666;
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .reason-item:before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+        
+        .match-card h2 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        
+        .age {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .looking-for {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .bio {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f8ff;
+            border-radius: 10px;
+        }
+        
+        .compatibility {
+            background: linear-gradient(135deg, #f8f8ff 0%, #f0f0ff 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #667eea;
+        }
+        
+        .percentage {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .reason {
+            color: #555;
+            font-style: italic;
+        }
+        
+        .interests {
+            margin-bottom: 25px;
+        }
+        
+        .interests h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .interest-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        
+        .interest-tag {
+            background: #e0e0e0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .interest-tag.common-interest {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .back-btn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            
+            .match-card {
+                padding: 20px;
+                margin: 0 auto;
+            }
+            
+            .profile-image,
+            .profile-image-placeholder {
+                width: 150px;
+                height: 150px;
+                font-size: 48px;
+            }
+            
+            .match-card h2 {
+                font-size: 1.5em;
+            }
+            
+            .age, .looking-for {
+                font-size: 0.9em;
+            }
+            
+            .bio {
+                font-size: 0.9em;
+                padding: 12px;
+            }
+            
+            .compatibility {
+                padding: 15px;
+            }
+            
+            .percentage {
+                font-size: 1.3em;
+            }
+            
+            .reason {
+                font-size: 0.85em;
+            }
+            
+            .interests h3 {
+                font-size: 1em;
+            }
+            
+            .interest-tag {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+            
+            .action-buttons {
+                gap: 10px;
+            }
+            
+            .pass-btn, .pick-btn {
+                font-size: 14px;
+                padding: 12px;
+            }
+            
+            .no-matches h2 {
+                font-size: 1.3em;
+            }
+            
+            .no-matches p {
+                font-size: 0.9em;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .match-card {
+                padding: 15px;
+            }
+            
+            .profile-image,
+            .profile-image-placeholder {
+                width: 120px;
+                height: 120px;
+                font-size: 36px;
+            }
+            
+            .match-card h2 {
+                font-size: 1.3em;
+            }
+            
+            .header h1 {
+                font-size: 1.2em;
+            }
+            
+            .compatibility {
+                padding: 12px;
+            }
+            
+            .percentage {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>discover matches 🔍</h1>
+            <a href="/dashboard" class="back-btn">← back</a>
+        </div>
+        
+        <div id="matchContainer">
+            <div class="loading">finding your perfect matches... 💫</div>
+        </div>
+    </div>
+    
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/';
+        }
+        
+        let currentMatches = [];
+        let currentIndex = 0;
+        
+        // Load matches
+        async function loadMatches() {
+            try {
+                const response = await fetch('/matching/find-matches', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    currentMatches = await response.json();
+                    currentIndex = 0;
+                    displayCurrentMatch();
+                } else if (response.status === 401) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                document.getElementById('matchContainer').innerHTML = `
+                    <div class="match-card">
+                        <div class="no-matches">
+                            <h2>oops! something went wrong 😅</h2>
+                            <p>try refreshing the page</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Display current match
+        function displayCurrentMatch() {
+            const container = document.getElementById('matchContainer');
+            
+            if (currentMatches.length === 0) {
+                container.innerHTML = `
+                    <div class="match-card">
+                        <div class="no-matches">
+                            <h2>no new matches right now 😔</h2>
+                            <p>check back later or update your profile!</p>
+                            <a href="/dashboard" class="back-btn">back to dashboard</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (currentIndex >= currentMatches.length) {
+                container.innerHTML = `
+                    <div class="match-card">
+                        <div class="no-matches">
+                            <h2>that's all for now! 🎉</h2>
+                            <p>you've seen all available matches</p>
+                            <a href="/dashboard" class="back-btn">back to dashboard</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+            
+            const match = currentMatches[currentIndex];
+            const userInterests = match.user.interests || [];
+            const commonInterests = match.common_interests || [];
+            
+            container.innerHTML = `
+                <div class="match-card">
+                    <div class="profile-image-container">
+                        ${match.user.profile_picture ? `<img src="${match.user.profile_picture}" alt="${match.user.username}" class="profile-image">` : `<div class="profile-image-placeholder">${match.user.username ? match.user.username.charAt(0).toUpperCase() : '?'}</div>`}
+                    </div>
+                    <h2>${match.user.username}</h2>
+                    ${match.user.age ? `<p class="age">${match.user.age} years old</p>` : ''}
+                    <p class="looking-for">Looking for: ${match.user.looking_for === 'buddy' ? '📚 study buddy' : match.user.looking_for === 'date' ? '💕 someone special' : '🤷 open to anything'}</p>
+                    ${match.user.bio ? `<p class="bio">${match.user.bio}</p>` : ''}
+                    
+                    ${match.match_percentage ? `
+                        <div class="compatibility">
+                            <div class="percentage">${match.match_percentage}% Match</div>
+                            ${match.compatibility_reasons && match.compatibility_reasons.length > 0 ? `
+                                <div class="reason">${match.compatibility_reasons[0]}</div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${userInterests.length > 0 ? `
+                        <div class="interests">
+                            <h3>Common Interests</h3>
+                            <div class="interest-tags">
+                                ${userInterests.map(interest => `
+                                    <span class="interest-tag ${commonInterests.includes(interest.name) ? 'common-interest' : ''}">${interest.name}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="action-buttons">
+                        <button class="pass-btn" onclick="passMatch()">Pass</button>
+                        <button class="pick-btn" onclick="pickMatch(${match.user.id})">Pick ❤️</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Pass on current match
+        function passMatch() {
+            currentIndex++;
+            displayCurrentMatch();
+        }
+        
+        // Pick current match
+        async function pickMatch(userId) {
+            try {
+                const response = await fetch('/matching/pick', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ picked_user_id: userId })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.is_mutual) {
+                        alert(`🎉 it's a match! ${currentMatches[currentIndex].user.username} picked you too!`);
+                    }
+                    currentIndex++;
+                    displayCurrentMatch();
+                }
+            } catch (error) {
+                console.error('Error picking match:', error);
+                alert('oops! something went wrong. try again?');
+            }
+        }
+        
+        // Initialize
+        loadMatches();
+    </script>
+</body>
+</html> 

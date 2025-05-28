@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchOverflow - Find Your Vibe ✨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+            }
+            
+            .auth-card {
+                padding: 25px;
+            }
+            
+            .tab-buttons {
+                gap: 10px;
+            }
+            
+            .tab-btn {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+            
+            .form-group label {
+                font-size: 0.9em;
+            }
+            
+            input, select, textarea {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .interest-tag {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+            
+            .submit-btn {
+                font-size: 15px;
+                padding: 12px;
+            }
+            
+            .section-title {
+                font-size: 11px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .auth-card {
+                padding: 20px;
+            }
+            
+            .tab-btn {
+                font-size: 13px;
+                padding: 8px 15px;
+            }
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .tagline {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.important {
+            background: linear-gradient(135deg, #f8f8ff 0%, #f0f0ff 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .important-badge {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        
+        .form-group.important label {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: #fafafa;
+        }
+        
+        .form-group.important textarea {
+            background: white;
+            border-color: #667eea;
+            min-height: 120px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .toggle-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .toggle-form a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .toggle-form a:hover {
+            text-decoration: underline;
+            color: #764ba2;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #fee;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 8px;
+            padding: 8px;
+            background: #efe;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .interests-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .interest-tag {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        
+        .interest-tag:hover {
+            border-color: #667eea;
+            background: #f8f8ff;
+            transform: translateY(-1px);
+        }
+        
+        .interest-tag.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+        
+        .preference-hint {
+            font-size: 13px;
+            color: #667eea;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f8ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+        
+        .section-title {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .interests-note {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        /* Scrollbar styling */
+        .container::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .container::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        
+        .container::-webkit-scrollbar-thumb:hover {
+            background: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MatchOverflow <span class="emoji">✨</span></h1>
+        <p class="tagline">find your perfect study buddy or vibe! 💜</p>
+        
+        <!-- Login Form -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginNickname">nickname 🏷️</label>
+                <input type="text" id="loginNickname" placeholder="your cool nickname" required>
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">password 🔒</label>
+                <input type="password" id="loginPassword" placeholder="shh... it's a secret" required>
+            </div>
+            <button type="submit">let's go! 🚀</button>
+            <div id="loginMessage"></div>
+            <div class="toggle-form">
+                new here? <a href="#" onclick="toggleForms()">join the party! 🎉</a>
+            </div>
+        </form>
+        
+        <!-- Registration Form -->
+        <form id="registerForm" class="hidden">
+            <div class="form-group">
+                <label for="nickname">pick a nickname 🏷️</label>
+                <input type="text" id="nickname" placeholder="something cool & unique" required>
+            </div>
+            <div class="form-group">
+                <label for="password">create a password 🔒</label>
+                <input type="password" id="password" placeholder="make it strong!" required>
+            </div>
+            <div class="form-group">
+                <label for="age">how old are you? 🎂</label>
+                <input type="number" id="age" placeholder="your age" required>
+            </div>
+            <div class="form-group">
+                <label for="bio">tell us about yourself 💭</label>
+                <textarea id="bio" rows="3" placeholder="what's your vibe? what makes you, you?"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="lookingFor">what are you looking for? 👀</label>
+                <select id="lookingFor">
+                    <option value="buddy">study buddy 📚</option>
+                    <option value="date">someone special 💕</option>
+                    <option value="both">open to anything! 🤷</option>
+                </select>
+            </div>
+            
+            <div class="form-group important">
+                <span class="important-badge">most important!</span>
+                <label for="matchPreference">describe your ideal match 💭</label>
+                <textarea id="matchPreference" rows="5" placeholder="this is SUPER important! tell us:
+- what kind of person are you hoping to meet?
+- what qualities matter most to you?
+- what would you do together?
+- what's your ideal vibe?
+
+be specific! our AI uses this to find your perfect match ✨" required></textarea>
+                <p class="preference-hint">
+                    <span>🎯</span>
+                    <span>this is how we find your perfect match! the more details, the better!</span>
+                </p>
+            </div>
+            
+            <div class="form-group">
+                <label>pick your interests (optional but helpful!) 🎯</label>
+                <div class="interests-container">
+                    <div class="section-title">study vibes</div>
+                    <span class="interest-tag" data-interest="late-night-study">late night grinds 🌙</span>
+                    <span class="interest-tag" data-interest="coffee-runs">coffee runs ☕</span>
+                    <span class="interest-tag" data-interest="library-dates">library sessions 📖</span>
+                    <span class="interest-tag" data-interest="group-projects">group projects 👥</span>
+                    
+                    <div class="section-title">entertainment</div>
+                    <span class="interest-tag" data-interest="netflix">netflix & chill 📺</span>
+                    <span class="interest-tag" data-interest="anime">anime 🍜</span>
+                    <span class="interest-tag" data-interest="kpop">k-pop 🎵</span>
+                    <span class="interest-tag" data-interest="gaming">gaming 🎮</span>
+                    <span class="interest-tag" data-interest="tiktok">tiktok scrolling 📱</span>
+                    <span class="interest-tag" data-interest="memes">meme culture 😂</span>
+                    
+                    <div class="section-title">social life</div>
+                    <span class="interest-tag" data-interest="parties">parties 🎉</span>
+                    <span class="interest-tag" data-interest="clubbing">clubbing 🕺</span>
+                    <span class="interest-tag" data-interest="cafe-hopping">café hopping ☕</span>
+                    <span class="interest-tag" data-interest="foodie">food adventures 🍕</span>
+                    
+                    <div class="section-title">lifestyle</div>
+                    <span class="interest-tag" data-interest="gym">gym & fitness 💪</span>
+                    <span class="interest-tag" data-interest="yoga">yoga & chill 🧘</span>
+                    <span class="interest-tag" data-interest="thrifting">thrifting 🛍️</span>
+                    <span class="interest-tag" data-interest="photography">photography 📸</span>
+                    <span class="interest-tag" data-interest="travel">travel 🌍</span>
+                    
+                    <div class="section-title">creative</div>
+                    <span class="interest-tag" data-interest="music">music 🎧</span>
+                    <span class="interest-tag" data-interest="art">art & design 🎨</span>
+                    <span class="interest-tag" data-interest="content-creation">content creation 📹</span>
+                    <span class="interest-tag" data-interest="fashion">fashion 👗</span>
+                    
+                    <div class="section-title">tech stuff</div>
+                    <span class="interest-tag" data-interest="coding">coding 💻</span>
+                </div>
+                <p class="interests-note">interests help, but your match description above is what really matters!</p>
+            </div>
+            
+            <button type="submit">create my profile! 🎉</button>
+            <div id="registerMessage"></div>
+            <div class="toggle-form">
+                already have an account? <a href="#" onclick="toggleForms()">sign in here 👋</a>
+            </div>
+        </form>
+    </div>
+    
+    <script>
+        // Toggle between login and register forms
+        function toggleForms() {
+            document.getElementById('loginForm').classList.toggle('hidden');
+            document.getElementById('registerForm').classList.toggle('hidden');
+        }
+        
+        // Handle interest selection
+        document.querySelectorAll('.interest-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('username', document.getElementById('loginNickname').value);
+            formData.append('password', document.getElementById('loginPassword').value);
+            
+            try {
+                const response = await fetch('/auth/token', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    localStorage.setItem('token', data.access_token);
+                    document.getElementById('loginMessage').innerHTML = '<p class="success">yay! logging you in... 🎉</p>';
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 2000);
+                } else {
+                    document.getElementById('loginMessage').innerHTML = '<p class="error">oops! wrong nickname or password 😅</p>';
+                }
+            } catch (error) {
+                document.getElementById('loginMessage').innerHTML = '<p class="error">something went wrong... try again? 🤔</p>';
+            }
+        });
+        
+        // Handle registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedInterests = Array.from(document.querySelectorAll('.interest-tag.selected'))
+                .map(tag => tag.dataset.interest);
+            
+            const matchPreference = document.getElementById('matchPreference').value.trim();
+            
+            if (!matchPreference) {
+                document.getElementById('registerMessage').innerHTML = '<p class="error">hey! you need to describe your ideal match! it\'s super important! 💭</p>';
+                document.getElementById('matchPreference').focus();
+                return;
+            }
+            
+            if (matchPreference.length < 50) {
+                document.getElementById('registerMessage').innerHTML = '<p class="error">tell us more! be specific about what you\'re looking for! (at least 50 characters) 📝</p>';
+                document.getElementById('matchPreference').focus();
+                return;
+            }
+            
+            const nickname = document.getElementById('nickname').value;
+            const ageValue = document.getElementById('age').value;
+            
+            // Validate age
+            const age = parseInt(ageValue);
+            if (isNaN(age) || age < 1) {
+                document.getElementById('registerMessage').innerHTML = '<p class="error">please enter a valid age! 🎂</p>';
+                document.getElementById('age').focus();
+                return;
+            }
+            
+            const userData = {
+                username: nickname,
+                password: document.getElementById('password').value,
+                full_name: nickname, // Use nickname as full name
+                age: age,
+                bio: document.getElementById('bio').value || null,
+                looking_for: document.getElementById('lookingFor').value,
+                interests: selectedInterests,
+                traits: ["friendly", "chill"], // Default traits
+                match_preference: matchPreference
+            };
+            
+            console.log('Sending registration data:', userData); // Debug log
+            
+            try {
+                const response = await fetch('/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                const data = await response.json();
+                console.log('Response:', response.status, data); // Debug log
+                
+                if (response.ok) {
+                    document.getElementById('registerMessage').innerHTML = '<p class="success">awesome! account created! now sign in 🎉</p>';
+                    setTimeout(() => {
+                        toggleForms();
+                    }, 2000);
+                } else {
+                    // Show detailed error message
+                    let errorMessage = 'oops! something went wrong 😅';
+                    
+                    if (data.detail) {
+                        if (typeof data.detail === 'string') {
+                            errorMessage = data.detail;
+                        } else if (Array.isArray(data.detail)) {
+                            // Handle validation errors
+                            errorMessage = data.detail.map(err => err.msg || err.message || JSON.stringify(err)).join(', ');
+                        } else {
+                            errorMessage = JSON.stringify(data.detail);
+                        }
+                    }
+                    
+                    document.getElementById('registerMessage').innerHTML = `<p class="error">${errorMessage}</p>`;
+                }
+            } catch (error) {
+                console.error('Registration error:', error); // Debug log
+                document.getElementById('registerMessage').innerHTML = '<p class="error">connection issues... try again? 🔌</p>';
+            }
+        });
+    </script>
+</body>
+</html> 

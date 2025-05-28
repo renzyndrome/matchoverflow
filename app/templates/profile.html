@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatchOverflow - Edit Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 1.8em;
+        }
+        
+        .back-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .profile-picture-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .profile-picture-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 20px;
+        }
+        
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
+            background: #f0f0f0;
+        }
+        
+        .profile-picture-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            border: 4px solid #667eea;
+        }
+        
+        .upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #667eea;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upload-btn:hover {
+            background: #5a67d8;
+            transform: scale(1.1);
+        }
+        
+        #imageInput {
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.important {
+            background: linear-gradient(135deg, #f8f8ff 0%, #f0f0ff 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .important-badge {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        
+        .form-group.important label {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1em;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: inherit;
+            background: #fafafa;
+        }
+        
+        .form-group.important textarea {
+            background: white;
+            border-color: #667eea;
+            min-height: 120px;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+        
+        .interests-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        
+        .interest-tag {
+            background: #f0f0f0;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        
+        .interest-tag:hover {
+            border-color: #667eea;
+            background: #f8f8ff;
+            transform: translateY(-1px);
+        }
+        
+        .interest-tag.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-1px);
+        }
+        
+        .section-title {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-title:first-child {
+            margin-top: 0;
+        }
+        
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-top: 30px;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .save-btn:active {
+            transform: translateY(0);
+        }
+        
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                transform: translateX(-50%) translateY(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .success {
+            background: #48bb78;
+            color: white;
+            border: none;
+        }
+        
+        .error {
+            background: #f56565;
+            color: white;
+            border: none;
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .back-btn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+            
+            .profile-card {
+                padding: 20px;
+            }
+            
+            .profile-picture-container {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .profile-picture,
+            .profile-picture-placeholder {
+                width: 120px;
+                height: 120px;
+                font-size: 36px;
+            }
+            
+            .upload-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .form-group.important {
+                padding: 15px;
+            }
+            
+            label {
+                font-size: 0.9em;
+            }
+            
+            input, select, textarea {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            .interest-tag {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+            
+            .save-btn {
+                font-size: 15px;
+                padding: 12px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .profile-card {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.2em;
+            }
+            
+            .profile-picture-section p {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>edit profile ✏️</h1>
+            <a href="/dashboard" class="back-btn">← back</a>
+        </div>
+        
+        <div class="profile-card">
+            <form id="profileForm">
+                <div class="profile-picture-section">
+                    <div class="profile-picture-container">
+                        <div id="profilePictureDisplay">
+                            <div class="profile-picture-placeholder" id="placeholder">
+                                <span id="userInitial">?</span>
+                            </div>
+                        </div>
+                        <button type="button" class="upload-btn" onclick="document.getElementById('imageInput').click()">
+                            📷
+                        </button>
+                        <input type="file" id="imageInput" accept="image/*" onchange="handleImageUpload(event)">
+                    </div>
+                    <p style="color: #666; font-size: 0.9em;">click the camera to upload your photo</p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="bio">about you 💭</label>
+                    <textarea id="bio" rows="3" placeholder="tell everyone what makes you awesome!"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">your age 🎂</label>
+                    <input type="number" id="age" placeholder="how old are you?">
+                </div>
+                
+                <div class="form-group">
+                    <label for="lookingFor">what are you looking for? 👀</label>
+                    <select id="lookingFor">
+                        <option value="buddy">study buddy 📚</option>
+                        <option value="date">someone special 💕</option>
+                        <option value="both">open to anything! 🤷</option>
+                    </select>
+                </div>
+                
+                <div class="form-group important">
+                    <span class="important-badge">most important!</span>
+                    <label for="matchPreference">describe your ideal match 💭</label>
+                    <textarea id="matchPreference" rows="5" placeholder="this is SUPER important! tell us:
+- what kind of person are you hoping to meet?
+- what qualities matter most to you?
+- what would you do together?
+- what's your ideal vibe?
+
+be specific! our AI uses this to find your perfect match ✨" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>your interests 🎯</label>
+                    <div class="interests-container">
+                        <div class="section-title">study vibes</div>
+                        <span class="interest-tag" data-interest="late-night-study">late night grinds 🌙</span>
+                        <span class="interest-tag" data-interest="coffee-runs">coffee runs ☕</span>
+                        <span class="interest-tag" data-interest="library-dates">library sessions 📖</span>
+                        <span class="interest-tag" data-interest="group-projects">group projects 👥</span>
+                        
+                        <div class="section-title">entertainment</div>
+                        <span class="interest-tag" data-interest="netflix">netflix & chill 📺</span>
+                        <span class="interest-tag" data-interest="anime">anime 🍜</span>
+                        <span class="interest-tag" data-interest="kpop">k-pop 🎵</span>
+                        <span class="interest-tag" data-interest="gaming">gaming 🎮</span>
+                        <span class="interest-tag" data-interest="tiktok">tiktok scrolling 📱</span>
+                        <span class="interest-tag" data-interest="memes">meme culture 😂</span>
+                        
+                        <div class="section-title">social life</div>
+                        <span class="interest-tag" data-interest="parties">parties 🎉</span>
+                        <span class="interest-tag" data-interest="clubbing">clubbing 🕺</span>
+                        <span class="interest-tag" data-interest="cafe-hopping">café hopping ☕</span>
+                        <span class="interest-tag" data-interest="foodie">food adventures 🍕</span>
+                        
+                        <div class="section-title">lifestyle</div>
+                        <span class="interest-tag" data-interest="gym">gym & fitness 💪</span>
+                        <span class="interest-tag" data-interest="yoga">yoga & chill 🧘</span>
+                        <span class="interest-tag" data-interest="thrifting">thrifting 🛍️</span>
+                        <span class="interest-tag" data-interest="photography">photography 📸</span>
+                        <span class="interest-tag" data-interest="travel">travel 🌍</span>
+                        
+                        <div class="section-title">creative</div>
+                        <span class="interest-tag" data-interest="music">music 🎧</span>
+                        <span class="interest-tag" data-interest="art">art & design 🎨</span>
+                        <span class="interest-tag" data-interest="content-creation">content creation 📹</span>
+                        <span class="interest-tag" data-interest="fashion">fashion 👗</span>
+                        
+                        <div class="section-title">tech stuff</div>
+                        <span class="interest-tag" data-interest="coding">coding 💻</span>
+                    </div>
+                </div>
+                
+                <button type="submit" class="save-btn">save changes 💾</button>
+                <div id="message"></div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Check if user is logged in
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/';
+        }
+        
+        // Store current profile picture
+        let currentProfilePicture = null;
+        
+        // Load current profile data
+        async function loadProfile() {
+            try {
+                const response = await fetch('/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const user = await response.json();
+                    
+                    // Fill in the form
+                    document.getElementById('bio').value = user.bio || '';
+                    document.getElementById('age').value = user.age || '';
+                    document.getElementById('lookingFor').value = user.looking_for || 'buddy';
+                    document.getElementById('matchPreference').value = user.match_preference || '';
+                    
+                    // Store and display profile picture or initial
+                    currentProfilePicture = user.profile_picture;
+                    if (user.profile_picture) {
+                        displayProfilePicture(user.profile_picture);
+                    } else {
+                        // Show first letter of username
+                        const initial = user.username ? user.username.charAt(0).toUpperCase() : '?';
+                        document.getElementById('userInitial').textContent = initial;
+                    }
+                    
+                    // Select current interests
+                    if (user.interests) {
+                        user.interests.forEach(interest => {
+                            const tag = document.querySelector(`[data-interest="${interest.name}"]`);
+                            if (tag) {
+                                tag.classList.add('selected');
+                            }
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+        
+        // Handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Check file size (limit to 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size should be less than 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    displayProfilePicture(base64Image);
+                    // Store for form submission
+                    window.uploadedImage = base64Image;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Display profile picture
+        function displayProfilePicture(imageSrc) {
+            document.getElementById('profilePictureDisplay').innerHTML = `
+                <img src="${imageSrc}" alt="Profile" class="profile-picture">
+            `;
+        }
+        
+        // Handle interest selection
+        document.querySelectorAll('.interest-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        
+        // Handle form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const selectedInterests = Array.from(document.querySelectorAll('.interest-tag.selected'))
+                .map(tag => tag.dataset.interest);
+            
+            const profileData = {
+                bio: document.getElementById('bio').value || null,
+                age: parseInt(document.getElementById('age').value) || null,
+                looking_for: document.getElementById('lookingFor').value,
+                match_preference: document.getElementById('matchPreference').value || null,
+                interests: selectedInterests
+            };
+            
+            // Add profile picture - either new upload or existing one
+            if (window.uploadedImage) {
+                profileData.profile_picture = window.uploadedImage;
+            } else if (currentProfilePicture) {
+                profileData.profile_picture = currentProfilePicture;
+            }
+            
+            try {
+                const response = await fetch('/users/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(profileData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('message').innerHTML = '<div class="message success">✅ Profile saved successfully!</div>';
+                    setTimeout(() => {
+                        document.getElementById('message').innerHTML = '';
+                    }, 3000);
+                } else {
+                    document.getElementById('message').innerHTML = '<div class="message error">❌ Oops! Something went wrong</div>';
+                    setTimeout(() => {
+                        document.getElementById('message').innerHTML = '';
+                    }, 3000);
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                document.getElementById('message').innerHTML = '<div class="message error">🔌 Connection error... try again?</div>';
+                setTimeout(() => {
+                    document.getElementById('message').innerHTML = '';
+                }, 3000);
+            }
+        });
+        
+        // Initialize
+        loadProfile();
+    </script>
+</body>
+</html> 
