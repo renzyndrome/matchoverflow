@@ -15,7 +15,10 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./matchoverflow.db")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # CORS settings for production
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:8000").split(",")
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS", 
+    "http://localhost:8000,https://codewithrenzy.com,https://www.codewithrenzy.com"
+).split(",")
 
 # Application settings
 APP_NAME = "MatchOverflow"

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # MatchOverflow Deployment Script for Digital Ocean
+# Domain: codewithrenzy.com
+# Server IP: 159.223.83.99
 
 echo "🚀 Starting MatchOverflow deployment..."
 
@@ -24,6 +26,7 @@ if [ -d ".git" ]; then
     git pull origin main
 else
     echo "📥 Cloning repository..."
+    # Update this with your actual GitHub repository URL
     git clone https://github.com/YOUR_USERNAME/matchoverflow.git .
 fi
 
@@ -62,6 +65,7 @@ Group=www-data
 WorkingDirectory=/var/www/matchoverflow
 Environment="PATH=/var/www/matchoverflow/venv/bin"
 ExecStart=/var/www/matchoverflow/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
@@ -72,7 +76,7 @@ echo "🌐 Configuring Nginx..."
 sudo tee /etc/nginx/sites-available/matchoverflow > /dev/null <<EOF
 server {
     listen 80;
-    server_name _;
+    server_name codewithrenzy.com www.codewithrenzy.com;
 
     client_max_body_size 10M;
 
@@ -107,10 +111,16 @@ sudo systemctl restart matchoverflow
 echo "✅ Checking service status..."
 sudo systemctl status matchoverflow --no-pager
 
+# Set up SSL with Let's Encrypt
+echo "🔒 Setting up SSL certificate..."
+sudo certbot --nginx -d codewithrenzy.com -d www.codewithrenzy.com --non-interactive --agree-tos --email your-email@example.com
+
 echo "🎉 Deployment complete!"
 echo ""
 echo "Next steps:"
 echo "1. Edit /var/www/matchoverflow/.env with your actual values"
 echo "2. Run 'sudo systemctl restart matchoverflow' after editing .env"
-echo "3. Set up SSL with: sudo certbot --nginx -d your-domain.com"
-echo "4. Check logs with: sudo journalctl -u matchoverflow -f" 
+echo "3. Your site should be available at https://codewithrenzy.com"
+echo "4. Check logs with: sudo journalctl -u matchoverflow -f"
+echo ""
+echo "DNS Note: It may take up to 48 hours for DNS changes to propagate fully." 
