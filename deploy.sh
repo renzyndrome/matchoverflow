@@ -12,7 +12,7 @@ sudo apt update && sudo apt upgrade -y
 
 # Install required packages
 echo "📦 Installing required packages..."
-sudo apt install -y python3-pip python3-venv nginx certbot python3-certbot-nginx
+sudo apt install -y python3-pip python3-venv nginx certbot python3-certbot-nginx dnsutils
 
 # Create application directory
 echo "📁 Setting up application directory..."
@@ -27,7 +27,7 @@ if [ -d ".git" ]; then
 else
     echo "📥 Cloning repository..."
     # Update this with your actual GitHub repository URL
-    git clone https://github.com/YOUR_USERNAME/matchoverflow.git .
+    git clone https://github.com/renzyndrome/matchoverflow.git .
 fi
 
 # Create virtual environment
@@ -71,7 +71,7 @@ Restart=always
 WantedBy=multi-user.target
 EOF
 
-# Configure Nginx
+# Configure Nginx (HTTP only first)
 echo "🌐 Configuring Nginx..."
 sudo tee /etc/nginx/sites-available/matchoverflow > /dev/null <<EOF
 server {
@@ -111,16 +111,29 @@ sudo systemctl restart matchoverflow
 echo "✅ Checking service status..."
 sudo systemctl status matchoverflow --no-pager
 
-# Set up SSL with Let's Encrypt
-echo "🔒 Setting up SSL certificate..."
-sudo certbot --nginx -d codewithrenzy.com -d www.codewithrenzy.com --non-interactive --agree-tos --email your-email@example.com
-
-echo "🎉 Deployment complete!"
+echo "🎉 Initial deployment complete!"
+echo ""
+echo "⚠️  IMPORTANT: SSL Setup Instructions"
+echo "===================================="
+echo ""
+echo "DNS must be properly configured before SSL setup."
+echo "Please ensure:"
+echo "1. Your domain points to this server (159.223.83.99)"
+echo "2. Both codewithrenzy.com and www.codewithrenzy.com resolve correctly"
+echo ""
+echo "To check DNS status:"
+echo "  dig codewithrenzy.com"
+echo "  dig www.codewithrenzy.com"
+echo ""
+echo "Once DNS is working, run SSL setup manually:"
+echo "  sudo certbot --nginx -d codewithrenzy.com -d www.codewithrenzy.com"
+echo ""
+echo "Or for a safer approach (if DNS is still propagating):"
+echo "  sudo certbot --nginx -d codewithrenzy.com"
 echo ""
 echo "Next steps:"
 echo "1. Edit /var/www/matchoverflow/.env with your actual values"
 echo "2. Run 'sudo systemctl restart matchoverflow' after editing .env"
-echo "3. Your site should be available at https://codewithrenzy.com"
-echo "4. Check logs with: sudo journalctl -u matchoverflow -f"
-echo ""
-echo "DNS Note: It may take up to 48 hours for DNS changes to propagate fully." 
+echo "3. Wait for DNS propagation (can take 15 min to 48 hours)"
+echo "4. Run SSL setup once DNS is working"
+echo "5. Check logs with: sudo journalctl -u matchoverflow -f" 
