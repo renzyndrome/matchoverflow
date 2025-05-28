@@ -63,9 +63,11 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=/var/www/matchoverflow
-Environment="PATH=/var/www/matchoverflow/venv/bin"
-ExecStart=/var/www/matchoverflow/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Environment="PATH=/var/www/matchoverflow/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+Environment="PYTHONPATH=/var/www/matchoverflow"
+ExecStart=/var/www/matchoverflow/venv/bin/python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
@@ -76,7 +78,7 @@ echo "🌐 Configuring Nginx..."
 sudo tee /etc/nginx/sites-available/matchoverflow > /dev/null <<EOF
 server {
     listen 80;
-    server_name codewithrenzy.com www.codewithrenzy.com;
+    server_name codewithrenzy.com www.codewithrenzy.com 159.223.83.99;
 
     client_max_body_size 10M;
 
