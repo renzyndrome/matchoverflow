@@ -569,6 +569,8 @@
         </div>
     </div>
     
+    <div id="toast" style="display:none;position:fixed;top:30px;right:30px;z-index:9999;background:#667eea;color:white;padding:18px 32px;border-radius:12px;font-size:1.1em;box-shadow:0 4px 20px rgba(102,126,234,0.18);font-weight:600;transition:opacity 0.3s;">🎉 You have a new match!</div>
+    
     <script>
         // Check if user is logged in
         const token = localStorage.getItem('token');
@@ -871,9 +873,38 @@
             window.location.href = '/';
         }
         
+        let lastMatchCount = 0;
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(()=>{toast.style.display='none';}, 400); }, 3000);
+        }
+        async function pollMatches() {
+            try {
+                const response = await fetch('/matching/matches', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const matches = await response.json();
+                    if (matches.length > lastMatchCount) {
+                        showToast('🎉 You have a new match!');
+                        displayMatches(matches);
+                        document.getElementById('matchCount').textContent = matches.length;
+                    }
+                    lastMatchCount = matches.length;
+                }
+            } catch (e) { /* ignore polling errors */ }
+            setTimeout(pollMatches, 5000);
+        }
+        
         // Initialize
         loadUserData();
-        loadMatches();
+        loadMatches().then(()=>{
+            lastMatchCount = matchesData.length;
+            pollMatches();
+        });
         loadPicksCount();
     </script>
 </body>

@@ -351,44 +351,42 @@
             gap: 20px;
         }
         
-        .photo-upload {
+        .pic-preview {
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: #f0f0f0;
+            background: #f8f8ff;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            margin: 0 auto 20px;
             overflow: hidden;
-            transition: all 0.3s;
-            border: 3px dashed #e0e0e0;
             position: relative;
+            border: 3px dashed #667eea;
+            margin: 0 auto 20px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        .photo-upload:active {
+        .pic-preview:hover {
+            border-style: solid;
+            transform: scale(1.02);
+        }
+
+        .pic-preview:active {
             transform: scale(0.98);
         }
 
-        .photo-upload::after {
-            content: '📸';
-            font-size: 24px;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 5px;
-            border-radius: 50%;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        .upload-icon {
+            font-size: 32px;
+            opacity: 0.7;
+            transition: all 0.3s;
         }
-        
-        .pic-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+
+        .pic-preview:hover .upload-icon {
+            opacity: 1;
+            transform: scale(1.1);
         }
-        
+
         .pic-upload-btn {
             flex: 1;
             padding: 12px;
@@ -467,7 +465,7 @@
                 <label>add a profile pic (optional) 📸</label>
                 <div class="profile-pic-upload">
                     <div class="pic-preview" id="picPreview">
-                        <span id="picInitial">?</span>
+                        <div class="upload-icon">📸</div>
                     </div>
                     <label for="profilePic" class="pic-upload-btn">
                         <span id="uploadText">click to upload a photo</span>
